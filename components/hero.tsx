@@ -73,7 +73,7 @@ export function Hero() {
             <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm  transition-all duration-300 hover:shadow-xl">
               <div className="relative overflow-hidden">
                 <Image
-                  src="/toyota-mark-x-250-g.webp"
+                  src="/toyota-mark-x-2014.webp"
                   alt="Японский автомобиль с аукциона"
                   className="aspect-4/3 w-full object-cover"
                   loading="eager"
