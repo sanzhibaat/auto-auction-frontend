@@ -1,90 +1,61 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AdminCars } from "@/components/admin/admin-cars";
 import { AdminLeads } from "@/components/admin/admin-leads";
 import { AdminReviews } from "@/components/admin/admin-reviews";
-import { Car, Inbox, Star, ArrowLeft, Lock } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+import { Car, Inbox, Star, LogOut, Globe, Home } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { logout } from "@/lib/auth";
 
 export default function AdminPage() {
-  const [authed, setAuthed] = useState(false);
-  const [pin, setPin] = useState("");
-  const [error, setError] = useState(false);
+  const router = useRouter();
 
-  function login(e: React.FormEvent) {
-    e.preventDefault();
-    if (pin === "admin") {
-      setAuthed(true);
-      setError(false);
-    } else {
-      setError(true);
-    }
-  }
-
-  if (!authed) {
-    return (
-      <main className="flex min-h-screen items-center justify-center bg-secondary px-4">
-        <Card className="w-full max-w-sm p-6">
-          <div className="mb-5 flex flex-col items-center gap-2 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10">
-              <Lock className="h-6 w-6 text-accent" />
-            </div>
-            <h1 className="font-heading text-xl font-semibold text-foreground">
-              Панель управления
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Введите пароль для доступа
-            </p>
-          </div>
-          <form onSubmit={login} className="flex flex-col gap-3">
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="pin">Пароль</Label>
-              <Input
-                id="pin"
-                type="password"
-                value={pin}
-                onChange={(e) => setPin(e.target.value)}
-                placeholder="Демо-пароль: admin"
-              />
-              {error && (
-                <p className="text-sm text-destructive">Неверный пароль</p>
-              )}
-            </div>
-            <Button type="submit">Войти</Button>
-            <Link
-              href="/"
-              className="text-center text-sm text-muted-foreground hover:text-foreground"
-            >
-              Вернуться на сайт
-            </Link>
-          </form>
-        </Card>
-      </main>
-    );
-  }
-
+  const handleLogout = async () => {
+    await logout(); // Вызываем API роут для удаления куки
+    router.push("/admin/login");
+    router.refresh(); // Обновляем кэш маршрутов, чтобы прокси снова проверил токен
+  };
   return (
     <main className="min-h-screen bg-secondary">
-      <header className="border-b border-border bg-background">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+      <header className="border-b border-border bg-background shadow-sm">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          {/* Левая часть */}
           <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Home className="h-4.5 w-4.5" />
+            </div>
+            <div className="flex flex-col">
+              <h1 className="text-base font-semibold leading-tight">
+                Админ-панель
+              </h1>
+              <span className="text-xs text-muted-foreground">
+                АвтоМонголия
+              </span>
+            </div>
+          </div>
+
+          {/* Правая часть */}
+          <div className="flex items-center gap-2">
             <Link
               href="/"
-              className="text-muted-foreground hover:text-foreground"
+              className="group flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <Globe className="h-4 w-4 transition-transform group-hover:-translate-y-0.5" />
+              <span className="hidden sm:inline">Вернуться на сайт</span>
             </Link>
-            <h1 className="font-heading text-lg font-semibold text-foreground">
-              Админ-панель
-            </h1>
+
+            <div className="h-5 w-px bg-border mx-1" />
+
+            <button
+              onClick={handleLogout}
+              className="group flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm font-medium text-muted-foreground shadow-sm hover:border-destructive hover:text-destructive hover:bg-destructive/5 transition-all active:scale-95"
+            >
+              <LogOut className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <span className="hidden sm:inline">Выйти</span>
+            </button>
           </div>
-          <span className="text-sm text-muted-foreground">АвтоМонголия</span>
         </div>
       </header>
 
