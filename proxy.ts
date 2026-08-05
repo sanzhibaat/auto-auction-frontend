@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 const protectedPaths = ["/admin/:path*"];
 
 // Исключения (публичные пути внутри /admin)
-const publicPaths = ["/admin/login", "/admin/login/"];
+const publicPaths = ["/login", "/login/"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -28,7 +28,7 @@ export async function proxy(request: NextRequest) {
   // Проверяем наличие токена в cookie
   const token = request.cookies.get("auth_token")?.value;
   if (!token) {
-    const loginUrl = new URL("/admin/login", request.url);
+    const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("from", pathname);
     return NextResponse.redirect(loginUrl);
   }
@@ -48,7 +48,7 @@ export async function proxy(request: NextRequest) {
     if (!response.ok) {
       // Токен невалиден - удаляем cookie и редиректим
       const redirectResponse = NextResponse.redirect(
-        new URL("/admin/login", request.url),
+        new URL("/login", request.url),
       );
       redirectResponse.cookies.delete("auth_token");
 
